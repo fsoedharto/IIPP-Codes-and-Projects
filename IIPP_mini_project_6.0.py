@@ -22,9 +22,7 @@ score = 0
 # define globals for cards
 SUITS = ('C', 'S', 'H', 'D')
 RANKS = ('A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K')
-VALUES = {'A':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'J':10, 
-
-'Q':10, 'K':10}
+VALUES = {'A':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'J':10, 'Q':10, 'K':10}
 
 ##########################################################
 # Define Classes
@@ -32,6 +30,10 @@ VALUES = {'A':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10,
 
 # define card class
 class Card:
+    """
+    This class is for the cards which includes the ranks,
+    suits, and drawing the cards.
+    """
     def __init__(self, suit, rank):
         if (suit in SUITS) and (rank in RANKS):
             self.suit = suit
@@ -42,20 +44,30 @@ class Card:
             print "Invalid card: ", suit, rank
 
     def __str__(self):
+        """
+        Prints rank and suit in readable form.
+        """
         return self.suit + self.rank
 
     def get_suit(self):
+        """
+        Return the suit of the card.
+        """
         return self.suit
 
     def get_rank(self):
+        """
+        Return the rank of the cards.
+        """
         return self.rank
 
     def draw(self, canvas, pos):
+        """
+        Draw the cards.
+        """
         card_loc = (CARD_CENTER[0] + CARD_SIZE[0] * RANKS.index(self.rank), 
                     CARD_CENTER[1] + CARD_SIZE[1] * SUITS.index(self.suit))
-        canvas.draw_image(card_images, card_loc, CARD_SIZE, [pos[0] + CARD_CENTER[0], 
-
-pos[1] + CARD_CENTER[1]], CARD_SIZE)
+        canvas.draw_image(card_images, card_loc, CARD_SIZE, [pos[0] + CARD_CENTER[0], pos[1] + CARD_CENTER[1]], CARD_SIZE)
         
 # define hand class
 class Hand:
@@ -66,7 +78,9 @@ class Hand:
         self.card_list = []
 
     def __str__(self):
-        # return a string representation of a hand
+        """
+        Return a string representation of a hand.
+        """
         string = 'Hand Contains: '
         for cards in self.card_list:
             if (cards.get_suit() == 'S'):
@@ -90,15 +104,22 @@ class Hand:
         return string
     
     def add_card(self, card):
-        # add a card object to a hand
+        """
+        Add a card object to a hand.
+        """
         self.card_list.append(card)
 
     def get_value(self):
-        # count aces as 1, if the hand has an ace, 
-        # then add 10 to hand value if it doesn't bust
-        # compute the value of the hand, see Blackjack video
+        """
+        Count aces as 1, if the hand has an ace, 
+        then add 10 to hand value if it doesn't bust
+        compute the value of the hand, see Blackjack video
+        """
+        
         hand_value = 0
         card_rank = []
+        
+        # Reiterates over the card list
         for cards in self.card_list:
             hand_value += int(VALUES[cards.get_rank()])
             card_rank.append(cards.get_rank())
@@ -108,14 +129,19 @@ class Hand:
    
     def draw(self, canvas, pos):
         n = 0
-        # draw a hand on the canvas, use the draw method 
-        # for cards
+        """
+        Draw a hand on the canvas, use the draw method 
+        for cards.
+        """
         for cards in self.card_list:
             cards.draw(canvas, pos)
             pos[0] += 73
         
 # define deck class 
 class Deck:
+    """
+    This class is for the deck class.
+    """
     def __init__(self):
     # create a Deck object
         self.deck = []
@@ -128,16 +154,21 @@ class Deck:
             i += 1
 
     def shuffle(self):
-        # shuffle the deck 
-        # use random.shuffle()
+        """
+        Shuffle the deck use random.shuffle()
+        """
         return random.shuffle(self.deck)
 
     def deal_card(self):
-        # deal a card object from the deck
+        """
+        Deal a card object from the deck
+        """
         return self.deck.pop(0)
     
     def __str__(self):
-        # Prints the string of the deck.
+        """
+        Prints the string of the deck.
+        """
         string = 'Deck Contains: '
         for cards in self.deck:
             if (cards.get_suit() == 'S'):
@@ -163,12 +194,14 @@ class Deck:
 ###########################################################
 # Define event handlers for buttons
 
-
+# Button Handlers for dealing the card
 def deal():
+    """
+    Initialize variables for Deck and computer hand and
+    shuffles the deck.
+    """
     global outcome, in_play, hand_player, hand_comp, deck, score
     
-    # Initialize variables for Deck and computer hand and
-    # shuffles the deck
     deck = Deck()
     deck.shuffle()
     hand_player = Hand()
@@ -191,6 +224,10 @@ def deal():
     in_play = True
 
 def hit():
+    """
+    Button handler for drawing cards from the deck. Check
+    If the player bust upon drawing the cards.
+    """
     global outcome, in_play, score, hand_player, deck
  
     # if the hand is in play, hit the player
@@ -204,6 +241,10 @@ def hit():
             score -= 1
     
 def stand():
+    """
+    Button handler to not draw anymore cards from the Deck. Checks if
+    the computer hand is below 17 which will then be bust.
+    """
     global outcome, in_play, score, hand_comp, deck
     
     # if hand is in play, repeatedly hit dealer until his hand has value 17 or more
@@ -231,6 +272,9 @@ def stand():
 
 # draw handler    
 def draw(canvas):
+    """
+    This is the draw handler for the cards.
+    """
     # Draw the player's hands
     hand_player.draw(canvas, [150, 350])
     
